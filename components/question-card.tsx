@@ -2,20 +2,19 @@ import Link from "next/link"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { MessageSquare, ThumbsUp, CheckCircle2 } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { MessageSquare, ThumbsUp } from 'lucide-react'
 
 interface DiscussionCardProps {
   question: {
     id: number
     title: string
+    avatar: string
     description: string
     tags: string[]
     replies: number
     upvotes: number
     author: string
     timestamp: string
-    isAnswered: boolean
   }
   discussionId: number
   discussionName: string
@@ -28,25 +27,11 @@ export default function DiscussionCard({ question, discussionId, discussionName 
         <Link href={`/discussion/${discussionId}`} className="text-sm text-muted-foreground hover:underline">
           {discussionName}
         </Link>
-        <div className="flex items-center justify-between">
-          <CardTitle>
-            <Link href={`/question/${question.id}`} className="hover:underline">
-              {question.title}
-            </Link>
-          </CardTitle>
-          {question.isAnswered && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>This question has been answered</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </div>
+        <CardTitle>
+          <Link href={`/question/${question.id}`} className="hover:underline">
+            {question.title}
+          </Link>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground">{question.description}</p>
@@ -75,11 +60,9 @@ export default function DiscussionCard({ question, discussionId, discussionName 
             <AvatarFallback>{question.author[0]}</AvatarFallback>
           </Avatar>
           <span className="text-sm text-muted-foreground">
-            Posted by
-            <Link 
-            href={`/user/${question.author}`} 
-            className="cursor-pointer hover:underline"> u/{question.author}</Link>
-            {" " + question.timestamp}
+            Posted by 
+            <Link href={`user/${question.author}`} className="hover:underline cursor-pointer">u/{question.author}</Link> 
+            {question.timestamp}
           </span>
         </div>
       </CardFooter>

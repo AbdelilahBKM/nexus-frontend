@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import { Inter } from 'next/font/google'
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import Header from "@/components/headers"
+import { AuthProvider } from "@/contexts/auth-context"
+import Header from "@/components/header"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,8 +26,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <main className="container mx-auto px-4 py-8">{children}</main>
+          <AuthProvider>
+            <Header />
+            <main className="container mx-auto px-4 py-8">{children}</main>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -2,7 +2,8 @@ import { useState } from "react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react'
+import { ThumbsUp, ThumbsDown, MessageSquare, CheckCircle2 } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import CommentList from "@/components/comment-list"
 import CommentEditor from "@/components/comment-editor"
 
@@ -20,16 +21,32 @@ interface ReplyCardProps {
       timestamp: string
     }[]
   }
+  isBestAnswer: boolean
+  onMarkAsBestAnswer: () => void
 }
 
-export default function ReplyCard({ reply }: ReplyCardProps) {
+export default function ReplyCard({ reply, isBestAnswer, onMarkAsBestAnswer }: ReplyCardProps) {
   const [showComments, setShowComments] = useState(false)
   const [showCommentEditor, setShowCommentEditor] = useState(false)
 
   return (
-    <Card>
+    <Card className={isBestAnswer ? "border-green-500" : ""}>
       <CardContent className="pt-6">
-        <p>{reply.content}</p>
+        <div className="flex justify-between items-start mb-4">
+          <p>{reply.content}</p>
+          {isBestAnswer && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <CheckCircle2 className="w-6 h-6 text-green-500" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Best Answer</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col items-start space-y-4">
         <div className="flex justify-between items-center w-full">
@@ -58,6 +75,11 @@ export default function ReplyCard({ reply }: ReplyCardProps) {
               <MessageSquare className="mr-1 h-4 w-4" />
               {reply.comments.length}
             </Button>
+            {!isBestAnswer && (
+              <Button variant="outline" size="sm" onClick={onMarkAsBestAnswer}>
+                Mark as Best Answer
+              </Button>
+            )}
           </div>
         </div>
         {showComments && (
