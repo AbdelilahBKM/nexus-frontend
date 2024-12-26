@@ -1,36 +1,100 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Github, Mail } from 'lucide-react'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+// import axios from "../api/axiosConfig"; // No need to import AxiosError here
+import { AxiosError } from "axios"; // Import AxiosError from 'axios' directly
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Github, Mail } from "lucide-react";
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const router = useRouter()
-  const { login } = useAuth()
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const router = useRouter();
+
+  // Login handler
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post("UserIdentity/Login", {
+        email,
+        password,
+      });
+      localStorage.setItem("token", response.data.Token); // Store JWT token
+      alert("Login successful!");
+      router.push("/");
+    } catch (error) {
+      // Cast the error to AxiosError
+      if (error instanceof AxiosError) {
+        console.error("Login failed", error.response?.data || error.message);
+        alert("Login failed: " + (error.response?.data || error.message));
+      } else {
+        console.error("Unexpected error", error);
+        alert("An unexpected error occurred.");
+      }
+    }
+  };
+
+  // Register handler
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+  
+    try {
+      const response = await fetch("https://localhost:5001/api/UserIdentity/Register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          userName: username,
+          password: password,
+          userType: 0,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log("Registration failed", errorData);
+        alert("Registration failed: " + (errorData.message || "Unknown error"));
+        return;
+      }
+  
+      const data = await response.json();
+      localStorage.setItem("token", data.Token); // Store JWT token
+      alert("Registration successful!");
+      setIsLogin(true); // Switch to login form
+    } catch (error) {
+      console.error("Unexpected error", error);
+      alert("An unexpected error occurred.");
+    }
+  };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+
+    // Handle login or register based on the form state
     if (isLogin) {
-      try {
-        await login(email, password)
-        router.push("/")
-      } catch (error) {
-        console.error("Login failed", error)
-      }
+      handleLogin();
     } else {
-      // Handle registration
-      console.log("Registration not implemented")
+      handleRegister();
     }
-  }
+  };
 
   return (
     <div className="container mx-auto flex items-center justify-center">
@@ -56,44 +120,68 @@ export default function AuthPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" placeholder="John" required />
+                        <Input
+                          id="firstName"
+                          placeholder="John"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          required
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" placeholder="Doe" required />
+                        <Input
+                          id="lastName"
+                          placeholder="Doe"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          required
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="username">Username</Label>
-                      <Input id="username" placeholder="johndoe" required />
+                      <Input
+                        id="username"
+                        placeholder="johndoe"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                      />
                     </div>
                   </>
                 )}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="john@example.com" 
-                    required 
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="john@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    required 
+                  <Input
+                    id="password"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    required
                   />
                 </div>
                 {!isLogin && (
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input id="confirmPassword" type="password" required />
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
                   </div>
                 )}
                 <Button type="submit" className="w-full">
@@ -129,6 +217,5 @@ export default function AuthPage() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
-
