@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -15,7 +14,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bell } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
-
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "@/store/store"
+import { loadAuthState, logout } from "@/store/reducers/authReducer"
+import { useEffect } from "react"
 // Mock notifications data
 const notifications = [
   { id: 1, message: "New reply to your question", isRead: false },
@@ -25,9 +27,12 @@ const notifications = [
 
 
 export default function Header() {
-  const { user, logout } = useAuth()
+  const dispatch = useDispatch();
+  const {isAuthenticated, username} = useSelector((state: RootState) => state.auth);
   const unreadCount = notifications.filter(n => !n.isRead).length
-
+  useEffect(() => {
+    dispatch(loadAuthState());
+  }, [dispatch]);
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -42,9 +47,19 @@ export default function Header() {
         </Link>
         <div className="flex items-center space-x-4">
           <Input className="w-64 hidden md:block" placeholder="Search discussions..." />
-          <Button variant="outline" asChild className="hidden sm:inline-flex">
-            <Link href="/ask-question">Ask a Question</Link>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">New</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem asChild>
+                <Link href="/ask-question">Ask a Question</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/add-discussion">Start a Discussion</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -81,12 +96,12 @@ export default function Header() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          {user ? (
+          {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar>
-                  <AvatarImage src={`https://avatar.vercel.sh/${user.name}`} />
-                  <AvatarFallback>{user.name[0]}</AvatarFallback>
+                  <AvatarImage src={`https://avatar.vercel.sh/${username}`} />
+                  <AvatarFallback>{username[0]}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -96,18 +111,17 @@ export default function Header() {
                 <DropdownMenuItem>
                   <Link href="/settings">Settings</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={logout}>
-                  Logout
+                <DropdownMenuItem >
+                  <Button variant="link" onClick={() => dispatch(logout())}>
+                    Logout
+                  </Button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
               <Button variant="ghost" asChild className="hidden sm:inline-flex">
-                <Link href="/auth">Login</Link>
-              </Button>
-              <Button asChild className="hidden sm:inline-flex">
-                <Link href="/auth">Register</Link>
+                <Link href="/auth">Sign In</Link>
               </Button>
             </>
           )}

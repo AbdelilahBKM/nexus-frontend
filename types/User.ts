@@ -4,13 +4,13 @@ export enum Role {
 }
 
 export default interface IUser {
-    Id: string;
-    Username: string;
-    Email: string;
-    UserType: Role;
-    ProfilePicture: string | null;
-    Bio: string | null;
-    IsActive: boolean;
-    CreatedAt: Date;
-    UpdatedAt: Date;
+    id: string;
+    userName: string;
+    email: string;
+    userType: Role;
+    profilePicture: string | null;
+    bio: string | null;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }

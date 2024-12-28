@@ -1,5 +1,5 @@
 "use client"
-import AskQuestionPage from "@/components/postQuestion";
+import AddDiscussionPage from "@/components/postDiscussion";
 import useAuth from "@/hooks/authHook";
 import { useEffect, useState } from "react";
 
@@ -12,7 +12,7 @@ const Profile = () => {
         return null;
     }
 
-    return isClient ? <AskQuestionPage /> : null;
+    return isClient ? <AddDiscussionPage /> : null;
 };
 
 export default Profile;

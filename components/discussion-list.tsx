@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import DiscussionCard from "@/components/discussion-card"
-import { Button } from "@/components/ui/button"
 import { Avatar } from "@radix-ui/react-avatar"
 import Link from "next/link"
 

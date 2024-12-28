@@ -1,0 +1,58 @@
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+interface AuthState {
+  isAuthenticated: boolean;
+  user_id: string;
+  username: string;
+  email: string;
+  access_token: string;
+}
+
+// Initialize state with local storage if available
+const initialState: AuthState = {
+  isAuthenticated: false,
+  user_id: '',
+  username: '',
+  email: '',
+  access_token: '',
+};
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    login(state, action: PayloadAction<{ client_id: string; access: string; usernane: string; email: string }>) {
+      const { access, usernane, client_id, email } = action.payload;
+      state.isAuthenticated = true;
+      state.access_token = access;
+      state.user_id = client_id;
+      state.username = usernane;
+      state.email = email;
+
+      // Persist state to local storage
+      window.localStorage.setItem('authState', JSON.stringify(state));
+    },
+    logout(state) {
+      state.isAuthenticated = false;
+      state.access_token = '';
+      state.user_id = '';
+      state.username = '';
+      state.email = '';
+
+      // Clear local storage
+      window.localStorage.removeItem('authState');
+    },
+    loadAuthState(state) {
+      const storedState = window.localStorage.getItem('authState');
+      if (storedState) {
+        const parsedState = JSON.parse(storedState);
+        state.isAuthenticated = parsedState.isAuthenticated;
+        state.user_id = parsedState.user_id;
+        state.access_token = parsedState.access_token;
+      }
+    },
+  },
+});
+
+export const { login, logout, loadAuthState } = authSlice.actions;
+export default authSlice.reducer;
