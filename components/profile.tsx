@@ -1,6 +1,4 @@
-"use client"
-
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -8,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/store/store"
-import { api_url } from "@/utils/globalVariables"
+import { api_url, storage_url } from "@/utils/globalVariables"
 import { logout } from "@/store/reducers/authReducer"
 import { useRouter } from "next/navigation"
 import IUser from "@/types/User"
@@ -17,14 +15,12 @@ import { AlertDefault } from "./alerts/AlertDefault"
 import LoadingScreen from "./loading-screen"
 
 
-// Import statements remain unchanged
-
 export default function ProfilePage() {
     const router = useRouter();
     const dispatch = useDispatch();
     const { user_id, access_token } = useSelector((state: RootState) => state.auth);
     const [isEditing, setIsEditing] = useState(false);
-    const [userData, setUserData] = useState<IUser | null>();
+    const [userData, setUserData] = useState<IUser | null>(null);
     const [username, setUsername] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -33,6 +29,8 @@ export default function ProfilePage() {
     const [errorMsg, setErrorMsg] = useState("");
     const [successMsg, setSuccessMsg] = useState("");
     const [loading, setLoading] = useState(true);
+    const [profileImage, setProfileImage] = useState("");
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -56,6 +54,7 @@ export default function ProfilePage() {
                 setLastName(data.lastName || "");
                 setEmail(data.email);
                 setBio(data.bio || "");
+                setProfileImage(data.profilePicture ?? null); // Set profile image on load if available
             } catch (err) {
                 console.error(err);
             } finally {
@@ -105,6 +104,64 @@ export default function ProfilePage() {
         }
     };
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            if (file.size > 10 * 1024 * 1024) {
+                setErrorMsg('File size exceeds the limit of 10MB.');
+                return;
+            }
+
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                setErrorMsg('Invalid file type. Please upload a valid image.');
+                return;
+            }
+            try {
+                const response = await fetch(`${api_url}/upload/upload-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${access_token}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to upload image');
+                }
+
+                const result = await response.json();
+                const fileName = result.filePath;
+                console.log('Uploaded image:', result);
+                const saveImageResponse = await fetch(`${api_url}/UserIdentity/${user_id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${access_token}`
+                    },
+                    body: JSON.stringify({
+                        firstName: firstName,
+                        lastName: lastName,
+                        userName: username,
+                        email: email,
+                        bio: bio,
+                        profilePicture: fileName
+                    })
+                });
+                if (!saveImageResponse.ok) {
+                    throw new Error('Failed to save image');
+                }
+                setSuccessMsg("Profile picture updated successfully");
+                dispatch(logout());
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                setErrorMsg("Failed to upload profile picture");
+            }
+        }
+    };
+
     return loading ? <LoadingScreen /> : !userData ? null : (
         <div className="container mx-auto px-4 py-8">
             <div className="mb-4">
@@ -118,10 +175,24 @@ export default function ProfilePage() {
                 <CardContent>
                     <div className="flex flex-col items-center mb-6">
                         <Avatar className="w-32 h-32 mb-4">
-                            <AvatarImage src={userData.profilePicture ?? undefined} alt={userData.userName} />
+                            <AvatarImage src={profileImage ? `${storage_url}/${profileImage}`: undefined} alt={userData.userName} />
                             <AvatarFallback>{userData.userName[0].toUpperCase()}</AvatarFallback>
                         </Avatar>
                         {!isEditing && <h2 className="text-2xl font-semibold">{userData.userName}</h2>}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            style={{ display: 'none' }}
+                            ref={fileInputRef}
+                        />
+                        <Button
+                            onClick={() => fileInputRef.current?.click()}
+                            variant="outline"
+                            className="mt-2"
+                        >
+                            Change Profile Picture
+                        </Button>
                     </div>
                     <form onSubmit={(e) => e.preventDefault()}>
                         <div className="space-y-4">
@@ -196,5 +267,3 @@ export default function ProfilePage() {
         </div>
     );
 }
-
-

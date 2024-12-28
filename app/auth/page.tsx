@@ -55,7 +55,7 @@ export default function AuthPage() {
       const data = await response.json();
       const user: IUser = data.user;
       const token = data.token;
-      dispatch(login({client_id: user.id, access: token, email: user.email, usernane: user.userName}));
+      dispatch(login({client_id: user.id, access: token, email: user.email, usernane: user.userName, profile_pic: user.profilePicture || ""}));
       router.push("/");
     } catch (error) {
       console.log("Unexpected error", error);
@@ -97,7 +97,7 @@ export default function AuthPage() {
       const data = await response.json();
       const user: IUser = data.user;
       const token = data.token;
-      dispatch(login({client_id: user.id, access: token, email: user.email, usernane: user.userName}));
+      dispatch(login({client_id: user.id, access: token, email: user.email, usernane: user.userName, profile_pic: user.profilePicture || ""}));
       router.push("/"); // Redirect to home page
     } catch (error) {
       console.error("Registration failed", error);

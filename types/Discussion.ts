@@ -1,14 +1,14 @@
 import IUser from "./User";
 import { IQuestion } from "./Post";
 export default interface IDiscussion {
-    Id: number;
-    D_Name: string;
-    D_Profile: string | null;
-    Number_of_members: number;
-    Number_of_active_members: number;
-    Number_of_posts: number;
-    Owner: IUser;
-    Questions: IQuestion[];
-    Created_at: Date;
-    Updated_at: Date;
+    id: number;
+    d_Name: string;
+    d_Profile: string | null;
+    number_of_members: number;
+    number_of_active_members: number;
+    number_of_posts: number;
+    owner: IUser;
+    questions: IQuestion[];
+    created_at: Date;
+    updated_at: Date;
 }

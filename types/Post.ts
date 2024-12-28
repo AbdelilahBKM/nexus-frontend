@@ -2,29 +2,30 @@ import IUser from "./User";
 import Vote from "./Vote";
 
 interface IPost {
-    Id: number;
-    Title: string;
-    Content: string;
-    PostedAt: Date;
-    UpdatedAt: Date;
-    PostedBy: IUser;
+    id: number;
+    title: string;
+    content: string;
+    postedAt: Date;
+    updatedAt: Date;
+    postedBy: IUser;
     isClosed: boolean;
-    Reputation: number;
-    Votes: Vote[];
-    Created_at: Date;
-    Updated_at: Date;
+    reputation: number;
+    votes: Vote[];
+    created_at: Date;
+    updated_at: Date;
 }
 
 export interface IQuestion extends IPost {
-    DiscussionId: number;
-    Answers: IAnswer[];
+    discussionId: number;
+    answers: IAnswer[];
+    isAnswered: boolean;
 }
 
 export interface IAnswer extends IPost {
-    AnswerId: number | null;
-    QuestionId: number | null;
-    Question: IQuestion | null;
-    AnswerTo: IAnswer | null;
-    IsBestAnswer: boolean;
-    Replies: IAnswer[];
+    answerId: number | null;
+    questionId: number | null;
+    question: IQuestion | null;
+    answerTo: IAnswer | null;
+    isBestAnswer: boolean;
+    replies: IAnswer[];
 }
