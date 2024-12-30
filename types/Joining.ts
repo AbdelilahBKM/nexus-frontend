@@ -2,10 +2,10 @@ import IDiscussion from "./Discussion";
 import IUser from "./User";
 
 export interface IJoining {
-    Id: number;
-    UserId: string;
-    User: IUser;
-    DiscussionId: number;
-    Discussion: IDiscussion;
-    Joined_at: Date;
+    id: number;
+    userId: string;
+    user: IUser;
+    discussionId: number;
+    discussion: IDiscussion;
+    joined_at: Date;
 }

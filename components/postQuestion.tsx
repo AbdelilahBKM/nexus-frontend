@@ -5,8 +5,24 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { marked } from "marked"
+
 
 // Mock data for discussions the user has joined
 const joinedDiscussions = [
@@ -19,6 +35,8 @@ export default function AskQuestionPage() {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [selectedDiscussion, setSelectedDiscussion] = useState("")
+  const [open, setOpen] = useState(false)
+  const [id, setId] = useState("")
   const router = useRouter()
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,7 +49,7 @@ export default function AskQuestionPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Card>
+      <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Ask a Question</CardTitle>
           <CardDescription>Share your question with the community</CardDescription>
@@ -39,19 +57,49 @@ export default function AskQuestionPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="discussion" className="text-sm font-medium">Select Discussion</label>
-              <Select onValueChange={setSelectedDiscussion} required>
-                <SelectTrigger id="discussion">
-                  <SelectValue placeholder="Choose a discussion" />
-                </SelectTrigger>
-                <SelectContent>
-                  {joinedDiscussions.map((discussion) => (
-                    <SelectItem key={discussion.id} value={discussion.id}>
-                      {discussion.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-[200px] justify-between"
+                  >
+                    {id
+                      ? joinedDiscussions.find((discussion) => discussion.id === id)?.name
+                      : "Select Discussion..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search framework..." />
+                    <CommandList>
+                      <CommandEmpty>No framework found.</CommandEmpty>
+                      <CommandGroup>
+                        {joinedDiscussions.map((discussion) => (
+                          <CommandItem
+                            key={discussion.id}
+                            value={discussion.name}
+                            onSelect={(currentId) => {
+                              setId(currentId === id ? "" : currentId)
+                              setOpen(false)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                id === discussion.id ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {discussion.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-2">
               <label htmlFor="title" className="text-sm font-medium">Question Title</label>
@@ -69,10 +117,19 @@ export default function AskQuestionPage() {
                 id="content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Provide more details about your question"
+                placeholder="Type your question here. Use markdown for formatting. For code blocks, use triple backticks (``). For single line code, use one backtick (`)."
+                className="min-h-[400px] resize-y"
                 rows={5}
                 required
               />
+              <div className="markdown-output">
+                {/* Render parsed Markdown content */}
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: marked(content),
+                  }}
+                />
+              </div>
             </div>
           </CardContent>
           <CardFooter>

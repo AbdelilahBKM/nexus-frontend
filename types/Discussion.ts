@@ -1,5 +1,6 @@
 import IUser from "./User";
 import { IQuestion } from "./Post";
+import { IJoining } from "./Joining";
 export default interface IDiscussion {
     id: number;
     d_Name: string;
@@ -9,6 +10,7 @@ export default interface IDiscussion {
     number_of_posts: number;
     owner: IUser;
     questions: IQuestion[];
+    joinings: IJoining[];
     created_at: Date;
     updated_at: Date;
 }

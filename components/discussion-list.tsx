@@ -15,7 +15,7 @@ export default function DiscussionList() {
   const [loading, setLoading] = useState(true)
   useEffect(() => {
     const fetchDiscussions = async () => {
-      try{
+      try {
         setLoading(true);
         const response = await fetch(`${api_url}/Discussion`, {
           method: "GET",
@@ -37,7 +37,7 @@ export default function DiscussionList() {
     }
     fetchDiscussions();
   }, []);
-  
+
   if (loading) return <LoadingScreen />
   return (
     <div className="space-y-8">
@@ -50,16 +50,19 @@ export default function DiscussionList() {
       ) :
         discussions.map((discussion) => (
           <div key={discussion.id} className="space-y-4">
-            <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Avatar className="w-10 h-10">
-                <AvatarImage src={`${storage_url}/${discussion.d_Profile}`} alt={discussion.d_Name} />
-                <AvatarFallback>{discussion.d_Name[0]}</AvatarFallback>
+            <div className="flex items-center gap-5">
+              <Avatar>
+                <AvatarImage className="rounded-full w-16 h-16 object-cover"
+                  src={`${storage_url}/${discussion.d_Profile}`}
+                  alt={discussion.d_Name} />
               </Avatar>
-              Latest Questions in
-              <Link href={`/discussion/${discussion.id}`}>
-                <span className="hover:underline cursor-pointer">{discussion.d_Name}</span>
-              </Link>
-            </h2>
+              <h2 className="text-2xl  flex items-center gap-2">
+                Latest Questions in
+                <Link href={`/discussion/${discussion.d_Name}`}>
+                  <span className="hover:underline cursor-pointer font-bold">{discussion.d_Name}</span>
+                </Link>
+              </h2>
+            </div>
             {discussion.questions.map((question) => (
               <DiscussionCard
                 key={question.id}

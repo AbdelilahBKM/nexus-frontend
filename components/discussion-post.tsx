@@ -3,20 +3,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ThumbsUp } from 'lucide-react'
+import { IQuestion } from "@/types/Post"
 
 interface DiscussionPostProps {
-  discussion: {
-    id: number
-    title: string
-    content: string
-    tags: string[]
-    author: string
-    timestamp: string
-    upvotes: number
-  }
+  question: IQuestion;
 }
 
-export default function DiscussionPost({ discussion }: DiscussionPostProps) {
+export default function DiscussionPost({ question }: DiscussionPostProps) {
   return (
     <Card>
       <CardHeader>
