@@ -105,6 +105,23 @@ export default function AddDiscussionPage() {
                 console.log(errorData);
                 throw new Error("An error occurred while creating the discussion: " + errorData);
             }
+            const discussion = await response.json();
+            const createJoining = await fetch(`${api_url}/Joining`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access_token}`
+                },
+                body: JSON.stringify({
+                    userId: user_id,
+                    discussionId: discussion.id
+                }),
+            });
+            if(!createJoining.ok) {
+                const errorData = await createJoining.json();
+                console.log(errorData);
+                throw new Error("An error occurred while joining the discussion: " + errorData);
+            }
             setSuccessMsg("Discussion created successfully");
             // Optionally, redirect to the new discussion page or discussions list
             // router.push('/discussions');

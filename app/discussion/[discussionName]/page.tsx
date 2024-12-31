@@ -18,6 +18,7 @@ import { AlertDestructive } from "@/components/alerts/AlertDestructive";
 import { AlertDefault } from "@/components/alerts/AlertDefault";
 import { BadgeMinus, BadgePlus, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function DiscussionPage() {
   const params = useParams();
@@ -169,16 +170,18 @@ export default function DiscussionPage() {
           </div>
           {userJoined?.id ?
             <div className="flex items-center gap-4">
+              <Link href={`/ask-question?discussion=${discussion.d_Name}`} passHref>
               <Button className="flex items-center gap-2" variant="secondary">Ask Question here</Button>
+              </Link>
               <Button onClick={leaveDiscussion} className="flex items-center gap-2" variant="destructive">
                 <p>Leave</p>
                 <BadgeMinus />
               </Button>
             </div> :
-            <Button onClick={joinDiscussion} className="flex items-center gap-2">
-              <p>Join Discussion</p>
-              <BadgePlus />
-            </Button>
+              <Button onClick={joinDiscussion} className="flex items-center gap-2">
+                <p>Join</p>
+                <BadgePlus />
+              </Button>
           }
         </div>
         <div className="space-y-4">

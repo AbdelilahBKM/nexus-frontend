@@ -1,3 +1,4 @@
+import IDiscussion from "./Discussion";
 import IUser from "./User";
 import Vote from "./Vote";
 
@@ -17,6 +18,7 @@ interface IPost {
 
 export interface IQuestion extends IPost {
     discussionId: number;
+    discussion: IDiscussion | null;
     answers: IAnswer[];
     isAnswered: boolean;
 }

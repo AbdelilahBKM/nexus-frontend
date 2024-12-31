@@ -12,6 +12,14 @@ interface DiscussionCardProps {
   discussion: IDiscussion
 }
 
+export const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+}
+
 export default function DiscussionCard({ discussion }: DiscussionCardProps) {
   const [latestQuestion, setLatestQuestion] = useState<IQuestion | null>(null);
   useEffect(() => {
@@ -77,7 +85,7 @@ export default function DiscussionCard({ discussion }: DiscussionCardProps) {
             <Link
               href={`/user/${latestQuestion.postedBy.userName}`}
               className="cursor-pointer hover:underline"> u/{latestQuestion.postedBy.userName}</Link>
-            {" " + latestQuestion.created_at}
+            {" On the " + formatDate(latestQuestion.created_at.toString())}
           </span>
         </div>
       </CardFooter>
