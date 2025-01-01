@@ -3,19 +3,54 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store/store"
+import Link from "next/link"
+import { IAnswer, IQuestion } from "@/types/Post"
+import { api_url } from "@/utils/globalVariables"
 
 interface ReplyEditorProps {
-  discussionId: number
+  question: IQuestion;
+  newAnswer: IAnswer | null;
+  setNewAnswer: (answer: IAnswer) => void;
 }
 
-export default function ReplyEditor({ discussionId }: ReplyEditorProps) {
-  const [reply, setReply] = useState("")
+export default function ReplyEditor({ question, newAnswer, setNewAnswer }: ReplyEditorProps) {
+  const { user_id, access_token } = useSelector((state: RootState) => state.auth);
+  const [reply, setReply] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // In a real application, you would send the reply to the server
-    console.log(`Submitting reply for discussion ${discussionId}:`, reply)
-    setReply("")
+    if (!user_id) return;
+    try {
+      setLoading(true);
+      const response = await fetch(`${api_url}/Post`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${access_token}`,
+        },
+        body: JSON.stringify({
+          title: `Answer to ${question.title}`,
+          content: reply,
+          postedBy: user_id,
+          questionId: question.id,
+          postType: 1,
+        }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData);
+      }
+      const data = await response.json();
+      setNewAnswer(data);
+    } catch (error) {
+      console.error("Error posting answer:", error);
+    } finally {
+      setReply("");
+      setLoading(false);
+    }
   }
 
   return (
@@ -24,10 +59,15 @@ export default function ReplyEditor({ discussionId }: ReplyEditorProps) {
       <Textarea
         value={reply}
         onChange={(e) => setReply(e.target.value)}
-        placeholder="Write your answer here..."
+        placeholder="Your Answer. Use markdown for formatting. For code blocks, use triple backticks (``). For single line code, use one backtick (`)."
         className="min-h-[200px]"
       />
-      <Button type="submit">Post Your Answer</Button>
+      {user_id ? <Button type="submit" disabled={loading}>{loading ? "hang on ..." : "Post Your Answer"}</Button> :
+        <div className="flex items-center space-x-2 text-sm ">
+          <p className="text-muted-foreground">You need to be logged in to post an answer.</p>
+          <Link href={"/auth"} className="hover:underline" >Login?</Link>
+        </div>
+      }
     </form>
   )
 }

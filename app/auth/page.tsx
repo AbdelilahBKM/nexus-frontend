@@ -10,12 +10,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Github, Mail } from "lucide-react";
 import { api_url } from "@/utils/globalVariables";
 import { AlertDestructive } from "@/components/alerts/AlertDestructive";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/store/reducers/authReducer";
 import IUser from "@/types/User";
+import { RootState } from "@/store/store";
 
 export default function AuthPage() {
   const dispatch = useDispatch();
+  const {user_id, access_token} = useSelector((state: RootState) => state.auth);
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,6 +28,10 @@ export default function AuthPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  if(user_id && access_token){
+    router.back();
+  }
 
   // Login handler
   const handleLogin = async () => {

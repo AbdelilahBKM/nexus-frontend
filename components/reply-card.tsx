@@ -6,26 +6,17 @@ import { ThumbsUp, ThumbsDown, MessageSquare, CheckCircle2 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import CommentList from "@/components/comment-list"
 import CommentEditor from "@/components/comment-editor"
+import { IAnswer } from "@/types/Post"
+import { formatDate } from "./discussion-card"
+import { storage_url } from "@/utils/globalVariables"
 
 interface ReplyCardProps {
-  reply: {
-    id: number
-    content: string
-    author: string
-    timestamp: string
-    upvotes: number
-    comments: {
-      id: number
-      content: string
-      author: string
-      timestamp: string
-    }[]
-  }
-  isBestAnswer: boolean
-  onMarkAsBestAnswer: () => void
+  answer: IAnswer;
+  isBestAnswer: boolean;
+  onMarkAsBestAnswer: () => void;
 }
 
-export default function ReplyCard({ reply, isBestAnswer, onMarkAsBestAnswer }: ReplyCardProps) {
+export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer }: ReplyCardProps) {
   const [showComments, setShowComments] = useState(false)
   const [showCommentEditor, setShowCommentEditor] = useState(false)
 
@@ -33,7 +24,7 @@ export default function ReplyCard({ reply, isBestAnswer, onMarkAsBestAnswer }: R
     <Card className={isBestAnswer ? "border-green-500" : ""}>
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-4">
-          <p>{reply.content}</p>
+          <p>{answer.content}</p>
           {isBestAnswer && (
             <TooltipProvider>
               <Tooltip>
@@ -52,17 +43,20 @@ export default function ReplyCard({ reply, isBestAnswer, onMarkAsBestAnswer }: R
         <div className="flex justify-between items-center w-full">
           <div className="flex items-center space-x-2">
             <Avatar className="w-6 h-6">
-              <AvatarImage src={`https://avatar.vercel.sh/${reply.author}`} />
-              <AvatarFallback>{reply.author[0]}</AvatarFallback>
+              <AvatarImage src={
+                answer.postedBy.profilePicture ?
+                `${storage_url}/${answer.postedBy.profilePicture}` :
+                `https://avatar.vercel.sh/${answer.postedBy.userName}`} />
+              {!answer.postedBy.profilePicture && <AvatarFallback>{answer.postedBy.userName[0]}</AvatarFallback>}
             </Avatar>
             <span className="text-sm text-muted-foreground">
-              Posted by u/{reply.author} {reply.timestamp}
+              Posted by u/{answer.postedBy.userName} {formatDate(answer.postedAt.toString())}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <Button variant="ghost" size="sm">
               <ThumbsUp className="mr-1 h-4 w-4" />
-              {reply.upvotes}
+              {answer.reputation}
             </Button>
             <Button variant="ghost" size="sm">
               <ThumbsDown className="mr-1 h-4 w-4" />
@@ -73,7 +67,7 @@ export default function ReplyCard({ reply, isBestAnswer, onMarkAsBestAnswer }: R
               onClick={() => setShowComments(!showComments)}
             >
               <MessageSquare className="mr-1 h-4 w-4" />
-              {reply.comments.length}
+              {answer.replies.length}
             </Button>
             {!isBestAnswer && (
               <Button variant="outline" size="sm" onClick={onMarkAsBestAnswer}>
@@ -84,7 +78,7 @@ export default function ReplyCard({ reply, isBestAnswer, onMarkAsBestAnswer }: R
         </div>
         {showComments && (
           <>
-            <CommentList comments={reply.comments} />
+            <CommentList comments={answer.replies} />
             {!showCommentEditor && (
               <Button
                 variant="outline"
@@ -96,7 +90,7 @@ export default function ReplyCard({ reply, isBestAnswer, onMarkAsBestAnswer }: R
             )}
             {showCommentEditor && (
               <CommentEditor
-                replyId={reply.id}
+                replyId={answer.id}
                 onSubmit={() => {
                   setShowCommentEditor(false)
                   // In a real application, you would add the new comment to the list

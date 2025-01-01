@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/popover"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { marked } from "marked"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import IDiscussion from "@/types/Discussion"

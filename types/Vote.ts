@@ -2,11 +2,11 @@ enum VoteType {
     Positive,
     Negative
 }
-export default interface Vote {
-    Id: number;
-    UserId: string;
-    PostId: number;
-    VoteType: VoteType;
-    CreatedAt: Date;
-    UpdatedAt: Date;
+export default interface IVote {
+    id?: number;
+    userId: string;
+    postId: number;
+    voteType: VoteType;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
