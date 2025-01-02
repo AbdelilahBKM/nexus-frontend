@@ -6,9 +6,10 @@ import ReplyCard from "./reply-card";
 interface IReply {
   discussionId: number;
   replies: IAnswer[];
+  isOwner: boolean;
 }
 
-export default function ReplyList({replies}: IReply) {
+export default function ReplyList({replies, isOwner}: IReply) {
   
   return (
     <div className="space-y-4">
@@ -18,6 +19,7 @@ export default function ReplyList({replies}: IReply) {
           key={reply.id} 
           answer={reply}
           isBestAnswer={reply.isBestAnswer}
+          isOwner={isOwner}
           onMarkAsBestAnswer={() => console.log(`Marked reply ${reply.id} as best answer`)}
         />
       ))}

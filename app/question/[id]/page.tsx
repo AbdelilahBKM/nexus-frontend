@@ -280,7 +280,9 @@ export default function QuestionPage() {
       </Card>
       {question && question.id && <ReplyList
         discussionId={question.id}
-        replies={answers} />
+        replies={answers} 
+        isOwner={isOwner}
+        />
       }
       {question && question.id  && <ReplyEditor question={question} newAnswer={newAnswer} setNewAnswer={setNewAnswer} />}
     </div>

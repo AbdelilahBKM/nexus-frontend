@@ -9,22 +9,30 @@ import CommentEditor from "@/components/comment-editor"
 import { IAnswer } from "@/types/Post"
 import { formatDate } from "./discussion-card"
 import { storage_url } from "@/utils/globalVariables"
+import { marked } from "marked"
+import IVote from "@/types/Vote"
 
 interface ReplyCardProps {
   answer: IAnswer;
   isBestAnswer: boolean;
   onMarkAsBestAnswer: () => void;
+  isOwner: boolean;
 }
 
-export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer }: ReplyCardProps) {
+export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer, isOwner }: ReplyCardProps) {
   const [showComments, setShowComments] = useState(false)
   const [showCommentEditor, setShowCommentEditor] = useState(false)
+  const [vote, setVote] = useState<IVote | null>(null);
 
   return (
     <Card className={isBestAnswer ? "border-green-500" : ""}>
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-4">
-          <p>{answer.content}</p>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: marked(answer!.content),
+            }}
+          />
           {isBestAnswer && (
             <TooltipProvider>
               <Tooltip>
@@ -45,8 +53,8 @@ export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer }: 
             <Avatar className="w-6 h-6">
               <AvatarImage src={
                 answer.postedBy.profilePicture ?
-                `${storage_url}/${answer.postedBy.profilePicture}` :
-                `https://avatar.vercel.sh/${answer.postedBy.userName}`} />
+                  `${storage_url}/${answer.postedBy.profilePicture}` :
+                  `https://avatar.vercel.sh/${answer.postedBy.userName}`} />
               {!answer.postedBy.profilePicture && <AvatarFallback>{answer.postedBy.userName[0]}</AvatarFallback>}
             </Avatar>
             <span className="text-sm text-muted-foreground">
@@ -69,7 +77,7 @@ export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer }: 
               <MessageSquare className="mr-1 h-4 w-4" />
               {answer.replies.length}
             </Button>
-            {!isBestAnswer && (
+            {!isBestAnswer && isOwner && (
               <Button variant="outline" size="sm" onClick={onMarkAsBestAnswer}>
                 Mark as Best Answer
               </Button>

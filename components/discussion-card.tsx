@@ -31,7 +31,7 @@ export default function DiscussionCard({ discussion }: DiscussionCardProps) {
   return !latestQuestion ? (<p>Nothing New</p>): (
     <Card>
       <CardHeader>
-        <Link href={`/discussion/${discussion.id}`} className="text-sm text-muted-foreground hover:underline">
+        <Link href={`/discussion/${discussion.d_Name}`} className="text-sm text-muted-foreground hover:underline">
           {discussion.d_Name}
         </Link>
         <div className="flex items-center justify-between">
@@ -77,7 +77,7 @@ export default function DiscussionCard({ discussion }: DiscussionCardProps) {
         </div>
         <div className="flex items-center space-x-2">
           <Avatar className="w-6 h-6">
-            <AvatarImage src={`https://avatar.vercel.sh/${latestQuestion.postedBy.userName}`} />
+            <AvatarImage src={`https://avatar.vercel.sh/${latestQuestion.postedBy ? latestQuestion.postedBy.userName : "username"}`} />
             <AvatarFallback>{latestQuestion.postedBy.userName}</AvatarFallback>
           </Avatar>
           <span className="text-sm text-muted-foreground">
