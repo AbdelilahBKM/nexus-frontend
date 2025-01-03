@@ -11,11 +11,10 @@ import { api_url } from "@/utils/globalVariables"
 
 interface ReplyEditorProps {
   question: IQuestion;
-  newAnswer: IAnswer | null;
   setNewAnswer: (answer: IAnswer) => void;
 }
 
-export default function ReplyEditor({ question, newAnswer, setNewAnswer }: ReplyEditorProps) {
+export default function ReplyEditor({ question, setNewAnswer }: ReplyEditorProps) {
   const { user_id, access_token } = useSelector((state: RootState) => state.auth);
   const [reply, setReply] = useState("");
   const [loading, setLoading] = useState(false);
@@ -62,7 +61,9 @@ export default function ReplyEditor({ question, newAnswer, setNewAnswer }: Reply
         placeholder="Your Answer. Use markdown for formatting. For code blocks, use triple backticks (``). For single line code, use one backtick (`)."
         className="min-h-[200px]"
       />
-      {user_id ? <Button type="submit" disabled={loading}>{loading ? "hang on ..." : "Post Your Answer"}</Button> :
+      {user_id ? !question.isClosed ?
+        <Button type="submit" disabled={loading}>{loading ? "hang on ..." : "Post Your Answer"}</Button> :
+        <p className="text-muted-foreground">This question is closed. You can't post an answer.</p> :
         <div className="flex items-center space-x-2 text-sm ">
           <p className="text-muted-foreground">You need to be logged in to post an answer.</p>
           <Link href={"/auth"} className="hover:underline" >Login?</Link>

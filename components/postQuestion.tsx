@@ -110,6 +110,7 @@ export default function AskQuestionPage() {
       const data = await response.json();
       console.log(data);
       setSuccessMessages("Successfully posted question.");
+      router.push(`/question/${data.id}`);
     } catch (error) {
       console.error("Error posting question:", error);
       setErrorMessages("Failed to post question. Please try again.");

@@ -63,12 +63,9 @@ export default function DiscussionList() {
                 </Link>
               </h2>
             </div>
-            {discussion.questions.map((question) => (
-              <DiscussionCard
-                key={question.id}
+            <DiscussionCard 
                 discussion={discussion}
               />
-            ))}
           </div>
         ))}
     </div>

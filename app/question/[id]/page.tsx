@@ -104,7 +104,7 @@ export default function QuestionPage() {
       setVote(null);
       setReputation((prev) => prev - 1);
       try{
-        const response = await fetch(`${api_url}/Vote/${questionId}`, {
+        const response = await fetch(`${api_url}/Vote/${vote.id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -153,7 +153,7 @@ export default function QuestionPage() {
       setVote(null);
       setReputation((prev) => prev + 1);
       try{
-        const response = await fetch(`${api_url}/Vote/${questionId}`, {
+        const response = await fetch(`${api_url}/Vote/${vote.id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -281,10 +281,10 @@ export default function QuestionPage() {
       {question && question.id && <ReplyList
         discussionId={question.id}
         replies={answers} 
-        isOwner={isOwner}
+        isOwner={isOwner && !question.isAnswered}
         />
       }
-      {question && question.id  && <ReplyEditor question={question} newAnswer={newAnswer} setNewAnswer={setNewAnswer} />}
+      {question && question.id  && <ReplyEditor question={question} setNewAnswer={setNewAnswer} />}
     </div>
   )
 }

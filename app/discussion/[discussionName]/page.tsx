@@ -1,24 +1,25 @@
 "use client";
 import { notFound, useParams } from "next/navigation"
-import DiscussionCard from "@/components/discussion-card"
+import DiscussionCard, { formatDate } from "@/components/discussion-card"
 import { Button } from "@/components/ui/button"
 import DiscussionPost from "@/components/discussion-post"
-import ReplyList from "@/components/reply-list"
-import ReplyEditor from "@/components/reply-editor"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import IDiscussion from "@/types/Discussion";
 import { useEffect, useState } from "react";
 import { api_url, storage_url } from "@/utils/globalVariables";
 import NotFound from "@/components/not-found";
 import LoadingScreen from "@/components/loading-screen";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { IJoining } from "@/types/Joining";
 import { AlertDestructive } from "@/components/alerts/AlertDestructive";
 import { AlertDefault } from "@/components/alerts/AlertDefault";
-import { BadgeMinus, BadgePlus, Plus } from "lucide-react";
+import { BadgeMinus, BadgePlus, CheckCircle2, MessageSquare, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip";
+import { marked } from "marked";
 
 export default function DiscussionPage() {
   const params = useParams();
@@ -165,33 +166,85 @@ export default function DiscussionPage() {
               {discussion.d_Name}
             </h1>
             <div className="text-sm text-muted-foreground mt-2">
-              <p>{discussion.number_of_members} members • {discussion.number_of_members} active • {discussion.number_of_posts} posts</p>
+              <p>{discussion.number_of_members} members • {discussion.number_of_members} active • {discussion.questions.length} posts</p>
             </div>
           </div>
           {userJoined?.id ?
             <div className="flex items-center gap-4">
               <Link href={`/ask-question?discussion=${discussion.d_Name}`} passHref>
-              <Button className="flex items-center gap-2" variant="secondary">Ask Question here</Button>
+                <Button className="flex items-center gap-2" variant="secondary">Ask Question here</Button>
               </Link>
               <Button onClick={leaveDiscussion} className="flex items-center gap-2" variant="destructive">
                 <p>Leave</p>
                 <BadgeMinus />
               </Button>
             </div> :
-              <Button onClick={joinDiscussion} className="flex items-center gap-2">
-                <p>Join</p>
-                <BadgePlus />
-              </Button>
+            <Button onClick={joinDiscussion} className="flex items-center gap-2">
+              <p>Join</p>
+              <BadgePlus />
+            </Button>
           }
         </div>
-        <div className="space-y-4">
-          {discussion.questions.map((question) => (
-            <DiscussionCard
-              key={question.id}
-              discussion={discussion}
-            />
-          ))}
-        </div>
+        {discussion.questions.map((question) => (
+          <Card key={question.id} className="space-y-4">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-2xl">
+                  <Link className="hover:underline" href={`/question/${question.id}`} passHref>
+                    {question?.title}
+                  </Link>
+                  </CardTitle>
+                {question?.isAnswered && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <CheckCircle2 className="w-6 h-6 text-green-500" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>This question has been answered</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: marked(question!.content),
+                  }}
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-between items-center">
+              <div className="flex items-center space-x-4">
+                <Button variant="ghost" size="sm">
+                  <ThumbsUp
+                    className="mr-1 h-4 w-4 fill-current text-blue-500" />
+                </Button>
+                <p>{question.reputation}</p>
+                <Button variant="ghost" size="sm">
+                  <ThumbsDown
+                    className="mr-1 h-4 w-4 fill-current text-orange-500" />
+                </Button>
+                <div className="flex items-center space-x-1">
+                  <MessageSquare className="w-4 h-4" />
+                  <span>{question?.answers.length}</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Avatar className="w-6 h-6">
+                  <AvatarImage src={`https://avatar.vercel.sh/${question?.postedBy.userName}`} />
+                  <AvatarFallback>{question?.postedBy.userName}</AvatarFallback>
+                </Avatar>
+                <span className="text-sm text-muted-foreground">
+                  Posted by <Link className="hover:underline" href={`/user/${question!.postedBy.userName}`}>u/{question?.postedBy.userName}</Link> {question && formatDate(question.postedAt.toString())}
+                </span>
+              </div>
+            </CardFooter>
+          </Card>
+        ))}
       </div>
     )
   } else {
@@ -199,7 +252,7 @@ export default function DiscussionPage() {
       <div className="space-y-8">
         <DiscussionPost question={discussion.questions} />
         {/* <ReplyList discussionId={discussion.id} /> */}
-        <ReplyEditor discussionId={discussion.id} />
+        {/* <ReplyEditor discussionId={discussion.id} /> */}
         donno
       </div>
     )

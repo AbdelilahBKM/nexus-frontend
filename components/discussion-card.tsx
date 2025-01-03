@@ -21,15 +21,22 @@ export const formatDate = (date: string) => {
 }
 
 export default function DiscussionCard({ discussion }: DiscussionCardProps) {
-  const [latestQuestion, setLatestQuestion] = useState<IQuestion | null>(null);
+  const [latestQuestions, setLatestQuestions] = useState<IQuestion[]>([]);
   useEffect(() => {
-    const latestQuestions = discussion.questions.sort((a, b) => {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-    setLatestQuestion(latestQuestions[0]);
-  }, [discussion]);
-  return !latestQuestion ? (<p>Nothing New</p>): (
-    <Card>
+    if (discussion.questions.length > 0) {
+      const allQuestions = [...discussion.questions].sort((a, b) => {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+      setLatestQuestions(allQuestions.slice(0, 3)); // Always ensure only the top 3 are set
+    }
+  }, [discussion.questions]);
+
+  useEffect(() => {
+    console.log("Latest questions?",latestQuestions);
+  }, [latestQuestions]);
+  return latestQuestions.length == 0  ? (<p>Nothing New</p>): (
+    latestQuestions.map((latestQuestion) => (
+      <Card  key={latestQuestion.id} className="space-y-4">
       <CardHeader>
         <Link href={`/discussion/${discussion.d_Name}`} className="text-sm text-muted-foreground hover:underline">
           {discussion.d_Name}
@@ -54,16 +61,6 @@ export default function DiscussionCard({ discussion }: DiscussionCardProps) {
           )}
         </div>
       </CardHeader>
-      {/* <CardContent>
-        <p className="text-muted-foreground">{question.description}</p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {question.tags.map((tag) => (
-            <Badge key={tag} variant="secondary">
-              #{tag}
-            </Badge>
-          ))}
-        </div>
-      </CardContent> */}
       <CardFooter className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-1">
@@ -90,6 +87,7 @@ export default function DiscussionCard({ discussion }: DiscussionCardProps) {
         </div>
       </CardFooter>
     </Card>
+    ))
   )
 }
 
