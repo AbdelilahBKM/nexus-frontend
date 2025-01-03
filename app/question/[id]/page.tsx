@@ -2,7 +2,6 @@
 import { notFound, useParams } from "next/navigation"
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ThumbsUp, MessageSquare, CheckCircle2, FilePenLine, CircleX, ThumbsDown } from 'lucide-react'
@@ -32,7 +31,7 @@ export default function QuestionPage() {
   const [vote, setVote] = useState<IVote | null>(null);
   const [reputation, setReputation] = useState(0);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
-  const [newAnswer, setNewAnswer] = useState<IAnswer| null>(null);
+  const [newAnswer, setNewAnswer] = useState<IAnswer | null>(null);
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
@@ -54,27 +53,27 @@ export default function QuestionPage() {
     };
     const fetchVotes = async () => {
       try {
-          const response = await fetch(`${api_url}/Vote/${questionId}/${user_id}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            }
-          });
-          if(!response.ok) {
-            if(response.status === 404) {
-              setVote(null);
-            } else {
-              throw new Error("Failed to fetch votes");
-            }
+        const response = await fetch(`${api_url}/Vote/${questionId}/${user_id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
           }
-          const data = await response.json();
-          setVote(data);
+        });
+        if (!response.ok) {
+          if (response.status === 404) {
+            setVote(null);
+          } else {
+            throw new Error("Failed to fetch votes");
+          }
+        }
+        const data = await response.json();
+        setVote(data);
       } catch (error) {
         console.error("Error fetching votes:", error);
       }
     }
     fetchQuestion();
-    if(user_id) {
+    if (user_id) {
       fetchVotes();
     }
   }, [user_id, questionId]);
@@ -103,7 +102,7 @@ export default function QuestionPage() {
     if (vote?.voteType === 0) {
       setVote(null);
       setReputation((prev) => prev - 1);
-      try{
+      try {
         const response = await fetch(`${api_url}/Vote/${vote.id}`, {
           method: "DELETE",
           headers: {
@@ -125,7 +124,7 @@ export default function QuestionPage() {
         voteType: 0,
       }
       setVote(newVote);
-      try{
+      try {
         const response = await fetch(`${api_url}/Vote`, {
           method: "POST",
           headers: {
@@ -152,7 +151,7 @@ export default function QuestionPage() {
     if (vote?.voteType === 1) {
       setVote(null);
       setReputation((prev) => prev + 1);
-      try{
+      try {
         const response = await fetch(`${api_url}/Vote/${vote.id}`, {
           method: "DELETE",
           headers: {
@@ -174,7 +173,7 @@ export default function QuestionPage() {
         voteType: 1,
       }
       setVote(newVote);
-      try{
+      try {
         const response = await fetch(`${api_url}/Vote`, {
           method: "POST",
           headers: {
@@ -236,13 +235,15 @@ export default function QuestionPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="mb-4">
+          <pre>
             <div
+              className="mb-4"
+              style={{ whiteSpace: "pre-wrap" }}
               dangerouslySetInnerHTML={{
-                __html: marked(question!.content),
+                __html: marked(question!.content.replace(/(?:\r\n|\r|\n)/g, "<br>"))
               }}
             />
-          </div>
+          </pre>
           {/* <div className="flex flex-wrap gap-2 mb-4">
             {question.tags.map((tag) => (
               <Badge key={tag} variant="secondary">
@@ -253,12 +254,12 @@ export default function QuestionPage() {
         </CardContent>
         <CardFooter className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <Button onClick={user_id ? handleUpvote : () => {}} variant="ghost" size="sm">
+            <Button onClick={user_id ? handleUpvote : () => { }} variant="ghost" size="sm">
               <ThumbsUp
                 className={"mr-1 h-4 w-4 " + (vote?.voteType == 0 && "fill-current text-blue-500")} />
             </Button>
             <p>{reputation}</p>
-            <Button onClick={user_id ? handleDownVote: () => {}} variant="ghost" size="sm">
+            <Button onClick={user_id ? handleDownVote : () => { }} variant="ghost" size="sm">
               <ThumbsDown
                 className={"mr-1 h-4 w-4 " + (vote?.voteType == 1 && "fill-current text-orange-500")} />
             </Button>
@@ -280,11 +281,11 @@ export default function QuestionPage() {
       </Card>
       {question && question.id && <ReplyList
         discussionId={question.id}
-        replies={answers} 
+        replies={answers}
         isOwner={isOwner && !question.isAnswered}
-        />
+      />
       }
-      {question && question.id  && <ReplyEditor question={question} setNewAnswer={setNewAnswer} />}
+      {question && question.id && <ReplyEditor question={question} setNewAnswer={setNewAnswer} />}
     </div>
   )
 }

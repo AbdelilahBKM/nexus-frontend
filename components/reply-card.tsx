@@ -158,11 +158,13 @@ export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer, is
     <Card className={isBestAnswer ? "border-green-500" : ""}>
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-4">
-          <div
-            dangerouslySetInnerHTML={{
-              __html: marked(answer!.content),
-            }}
-          />
+          <pre>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: marked(answer!.content),
+              }}
+            />
+          </pre>
           {isBestAnswer && (
             <TooltipProvider>
               <Tooltip>
