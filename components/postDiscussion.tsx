@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -9,14 +8,13 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Label } from "@/components/ui/label"
 import { X, ImageIcon } from 'lucide-react'
 import { api_url } from "@/utils/globalVariables"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import { AlertDestructive } from "./alerts/AlertDestructive"
 import { AlertDefault } from "./alerts/AlertDefault"
 import Image from "next/image"
 
 export default function AddDiscussionPage() {
-    const dispatch = useDispatch();
     const { user_id, access_token } = useSelector((state: RootState) => state.auth);
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
@@ -24,7 +22,6 @@ export default function AddDiscussionPage() {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [errorMsg, setErrorMsg] = useState("")
     const [successMsg, setSuccessMsg] = useState("")
-    const router = useRouter()
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

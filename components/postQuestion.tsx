@@ -73,13 +73,13 @@ export default function AskQuestionPage() {
       }
     }
     fetchDiscussions();
-  }, [user_id]);
+  }, [user_id, access_token]);
 
   useEffect(() => {
     if (discussionName) {
       setSelectedDiscussion(listDiscussion.find((discussion: IDiscussion) => discussion.d_Name === discussionName));
     }
-  }, [listDiscussion]);
+  }, [listDiscussion, discussionName]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessages("");

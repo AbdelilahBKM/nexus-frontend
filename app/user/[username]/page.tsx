@@ -2,7 +2,6 @@
 
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-  import DiscussionList from "@/components/discussion-list"
   import { api_url, storage_url } from "@/utils/globalVariables"
   import IUser from "@/types/User"
   import NotFound from "@/components/not-found"

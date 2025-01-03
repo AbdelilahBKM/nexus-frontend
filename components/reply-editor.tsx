@@ -63,7 +63,7 @@ export default function ReplyEditor({ question, setNewAnswer }: ReplyEditorProps
       />
       {user_id ? !question.isClosed ?
         <Button type="submit" disabled={loading}>{loading ? "hang on ..." : "Post Your Answer"}</Button> :
-        <p className="text-muted-foreground">This question is closed. You can't post an answer.</p> :
+        <p className="text-muted-foreground">This question is closed. You can&apos;t post an answer.</p> :
         <div className="flex items-center space-x-2 text-sm ">
           <p className="text-muted-foreground">You need to be logged in to post an answer.</p>
           <Link href={"/auth"} className="hover:underline" >Login?</Link>

@@ -62,7 +62,7 @@ export default function ProfilePage() {
             }
         };
         fetchUserData();
-    }, []);
+    }, [user_id, dispatch, router]);
 
     const handleInputChange = async () => {
         setErrorMsg("");

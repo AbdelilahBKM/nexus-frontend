@@ -1,12 +1,12 @@
 "use client";
-import { notFound, useParams } from "next/navigation"
-import DiscussionCard, { formatDate } from "@/components/discussion-card"
+import { useParams } from "next/navigation"
+import { formatDate } from "@/components/discussion-card"
 import { Button } from "@/components/ui/button"
 import DiscussionPost from "@/components/discussion-post"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import IDiscussion from "@/types/Discussion";
 import { useEffect, useState } from "react";
-import { api_url, storage_url } from "@/utils/globalVariables";
+import { api_url } from "@/utils/globalVariables";
 import NotFound from "@/components/not-found";
 import LoadingScreen from "@/components/loading-screen";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,7 +15,7 @@ import { RootState } from "@/store/store";
 import { IJoining } from "@/types/Joining";
 import { AlertDestructive } from "@/components/alerts/AlertDestructive";
 import { AlertDefault } from "@/components/alerts/AlertDefault";
-import { BadgeMinus, BadgePlus, CheckCircle2, MessageSquare, Plus, ThumbsDown, ThumbsUp } from "lucide-react";
+import { BadgeMinus, BadgePlus, CheckCircle2, MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip";
@@ -96,7 +96,7 @@ export default function DiscussionPage() {
     };
 
     fetchData();
-  }, [params, user_id]);
+  }, [params, user_id, discussionName]);
 
   const joinDiscussion = async () => {
     if (!user_id) {

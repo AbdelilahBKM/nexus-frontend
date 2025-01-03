@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import DiscussionCard from "@/components/discussion-card"
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar"
 import Link from "next/link"
 import IDiscussion from "@/types/Discussion"
 import { Ghost } from "lucide-react"
