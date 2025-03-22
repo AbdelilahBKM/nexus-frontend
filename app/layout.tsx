@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from "@/components/header"
 import StoreProvider from "@/store/authProvider"
+import { Sidebar } from "@/components/sidebar"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -27,8 +28,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <StoreProvider>
-            <Header />
-            <main className="container mx-auto px-4 py-8">{children}</main>
+          <div className="flex h-screen">
+              <Sidebar />
+              <div className="flex-1 flex flex-col min-h-screen overflow-auto">
+                <Header />
+                <main className="container mx-auto px-4 py-8 flex-1">{children}</main>
+              </div>
+            </div>
           </StoreProvider>
         </ThemeProvider>
       </body>

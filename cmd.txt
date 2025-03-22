@@ -1,5 +1,5 @@
 // shadcn/ui
 npx --legacy-peer-deps shadcn@latest init -d
-npx --legacy-peer-deps shadcn@latest add command
+npx --legacy-peer-deps shadcn@latest add {component}
 
 

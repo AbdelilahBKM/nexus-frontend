@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react'
 
 export default function LoadingScreen() {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-background">
+    <div className="fixed inset-0 top-0 flex flex-col items-center justify-center bg-background">
       <div className="relative w-32 h-32 mb-8 animate-pulse">
         <Image
           src="/Logo/Nexus_Logo.png"

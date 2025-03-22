@@ -1,6 +1,7 @@
 import IUser from "./User";
 import { IQuestion } from "./Post";
 import { IJoining } from "./Joining";
+
 export default interface IDiscussion {
     id: number;
     d_Name: string;
