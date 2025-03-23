@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip";
 import { marked } from "marked";
+import SanitizedHTML from "@/components/sanitized-html";
 
 export default function DiscussionPage() {
   const params = useParams();
@@ -210,11 +211,7 @@ export default function DiscussionPage() {
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: marked(question!.content),
-                  }}
-                />
+                <SanitizedHTML content={question?.content} />
               </div>
             </CardContent>
             <CardFooter className="flex justify-between items-center">

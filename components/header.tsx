@@ -20,11 +20,12 @@ import { loadAuthState, logout } from "@/store/reducers/authReducer"
 import { useEffect, useState } from "react"
 import { api_url, storage_url } from "@/utils/globalVariables"
 import INotification from "@/types/Notification"
-// Mock notifications data
+import { useRouter } from "next/navigation"
 
 
 export default function Header() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { isAuthenticated, username, user_id, access_token, profile_pic } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState<INotification[]>([]);
@@ -149,7 +150,10 @@ export default function Header() {
                   <Link href="/settings">Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem >
-                  <Button variant="link" onClick={() => dispatch(logout())}>
+                  <Button variant="link" onClick={() => {
+                    dispatch(logout());
+                    router.refresh();
+                    }}>
                     Logout
                   </Button>
                 </DropdownMenuItem>

@@ -6,6 +6,7 @@ import { api_url } from "@/utils/globalVariables";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 interface IReply {
   discussionId: number;
   replies: IAnswer[];
@@ -38,7 +39,7 @@ export default function ReplyList({replies, isOwner}: IReply) {
       <h2 className="text-2xl font-bold">Replies</h2>
       {replies.map((reply) => (
         <ReplyCard 
-          key={reply.id} 
+          key={reply.id}
           answer={reply}
           isBestAnswer={reply.isBestAnswer}
           isOwner={isOwner}
