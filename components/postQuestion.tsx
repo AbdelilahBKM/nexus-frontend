@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Editor } from 'primereact/editor';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import {
   Command,
@@ -29,6 +30,7 @@ import LoadingScreen from "./loading-screen"
 import { IJoining } from "@/types/Joining"
 import { AlertDestructive } from "./alerts/AlertDestructive"
 import { AlertDefault } from "./alerts/AlertDefault"
+import { Label } from "./ui/label"
 
 
 export default function AskQuestionPage() {
@@ -122,52 +124,48 @@ export default function AskQuestionPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
       {errorMessages && <AlertDestructive message={errorMessages} />}
       {successMessages && <AlertDefault message={successMessages} />}
-      <Card className="w-full max-w-2xl mx-auto">
+      <Card className="shadow-md">
         <CardHeader>
-          <CardTitle>Ask a Question</CardTitle>
-          <CardDescription>Share your question with the community</CardDescription>
+          <CardTitle className="text-2xl">Ask a Question</CardTitle>
+          <CardDescription>Get help from the community by asking a clear, specific question</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="space-y-2">
+              <Label htmlFor="discussion" className="text-base font-medium">
+                Select Discussion
+              </Label>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-[200px] justify-between"
-                  >
-                    {id
-                      ? listDiscussion.find((discussion) => discussion.id === id)?.d_Name
-                      : "Select Discussion..."}
+                  <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
+                    {selectedDiscussion
+                      ? listDiscussion.find((d) => d.id === selectedDiscussion.id)?.d_Name
+                      : "Select a discussion..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
+                <PopoverContent className="w-full p-0">
                   <Command>
-                    <CommandInput placeholder="Search framework..." />
+                    <CommandInput placeholder="Search discussions..." />
                     <CommandList>
-                      <CommandEmpty>Join a discussion to ask a question.</CommandEmpty>
+                      <CommandEmpty>No discussion found.</CommandEmpty>
                       <CommandGroup>
                         {listDiscussion.map((discussion) => (
                           <CommandItem
                             key={discussion.id}
                             value={discussion.d_Name}
-                            onSelect={(currentValue) => {
-                              const selectedDiscussion = listDiscussion.find(d => d.d_Name === currentValue);
-                              setId(selectedDiscussion ? selectedDiscussion.id : 0);
-                              setSelectedDiscussion(selectedDiscussion);
+                            onSelect={() => {
+                              setSelectedDiscussion(discussion)
                               setOpen(false)
                             }}
                           >
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                id === discussion.id ? "opacity-100" : "opacity-0"
+                                selectedDiscussion?.id === discussion.id ? "opacity-100" : "opacity-0",
                               )}
                             />
                             {discussion.d_Name}
@@ -178,40 +176,41 @@ export default function AskQuestionPage() {
                   </Command>
                 </PopoverContent>
               </Popover>
+              <p className="text-sm text-muted-foreground">Choose the most relevant discussion for your question</p>
             </div>
+
             <div className="space-y-2">
-              <label htmlFor="title" className="text-sm font-medium">Question Title</label>
+              <Label htmlFor="title" className="text-base font-medium">
+                Question Title
+              </Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter the title of your question"
-                required
+                placeholder="e.g., How to implement binary search in Python?"
+                className="text-base"
               />
+              <p className="text-sm text-muted-foreground">
+                Be specific and imagine you're asking a question to another person
+              </p>
             </div>
+
             <div className="space-y-2">
-              <label htmlFor="content" className="text-sm font-medium">Question Details</label>
-              <Textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Type your question here. Use markdown for formatting. For code blocks, use triple backticks (``). For single line code, use one backtick (`)."
-                className="min-h-[400px] resize-y"
-                rows={5}
-                required
-              />
-              {/* Render parsed Markdown content */}
-              {/* <div className="markdown-output">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: marked(content),
-                  }}
-                />
-              </div> */}
+              <Label htmlFor="content" className="text-base font-medium">
+                Question Details
+              </Label>
+              <Editor value={content} onTextChange={(e) => setContent(e.htmlValue || "")} style={{ height: '320px' }} />
+              <p className="text-sm text-muted-foreground">
+                Include all the information someone would need to answer your question
+              </p>
             </div>
           </CardContent>
-          <CardFooter>
-            <Button type="submit">Post Question</Button>
+
+          <CardFooter className="flex justify-between">
+            <Button type="button" variant="outline" onClick={() => router.back()}>
+              Cancel
+            </Button>
+              <Button type="submit">Post Question</Button>
           </CardFooter>
         </form>
       </Card>

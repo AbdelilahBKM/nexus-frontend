@@ -4,16 +4,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { ThumbsUp, ThumbsDown, MessageSquare, CheckCircle2 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import CommentList from "@/components/comment-list"
-import CommentEditor from "@/components/comment-editor"
 import { IAnswer } from "@/types/Post"
 import { formatDate } from "./discussion-card"
 import { api_url, storage_url } from "@/utils/globalVariables"
-import { marked } from "marked"
 import IVote from "@/types/Vote"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import Link from "next/link"
+import SanitizedHTML from "./sanitized-html"
 
 interface ReplyCardProps {
   answer: IAnswer;
@@ -24,8 +22,8 @@ interface ReplyCardProps {
 
 export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer, isOwner }: ReplyCardProps) {
   const { user_id, access_token } = useSelector((state: RootState) => state.auth);
+  const [newReply, setNewReply] = useState<IAnswer | null>(null);
   const [showComments, setShowComments] = useState(false);
-  const [showCommentEditor, setShowCommentEditor] = useState(false);
   const [vote, setVote] = useState<IVote | null>(null);
   const [reputation, setReputation] = useState(answer.reputation);
 
@@ -158,13 +156,7 @@ export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer, is
     <Card className={isBestAnswer ? "border-green-500" : ""}>
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-4">
-          <pre>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: marked(answer!.content),
-              }}
-            />
-          </pre>
+          <SanitizedHTML content={answer.content || ""} />
           {isBestAnswer && (
             <TooltipProvider>
               <Tooltip>
@@ -203,14 +195,6 @@ export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer, is
               <ThumbsDown
                 className={"mr-1 h-4 w-4 " + (vote?.voteType == 1 && "fill-current text-orange-500")} />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowComments(!showComments)}
-            >
-              <MessageSquare className="mr-1 h-4 w-4" />
-              {answer.replies.length}
-            </Button>
             {!isBestAnswer && isOwner && (
               <Button variant="outline" size="sm" onClick={() => onMarkAsBestAnswer(answer.id)}>
                 Mark as Best Answer
@@ -218,29 +202,6 @@ export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer, is
             )}
           </div>
         </div>
-        {showComments && (
-          <>
-            <CommentList comments={answer.replies} />
-            {!showCommentEditor && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowCommentEditor(true)}
-              >
-                Add a comment
-              </Button>
-            )}
-            {showCommentEditor && (
-              <CommentEditor
-                replyId={answer.id}
-                onSubmit={() => {
-                  setShowCommentEditor(false)
-                  // In a real application, you would add the new comment to the list
-                }}
-              />
-            )}
-          </>
-        )}
       </CardFooter>
     </Card>
   )
