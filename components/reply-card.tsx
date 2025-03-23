@@ -9,11 +9,11 @@ import CommentEditor from "@/components/comment-editor"
 import { IAnswer } from "@/types/Post"
 import { formatDate } from "./discussion-card"
 import { api_url, storage_url } from "@/utils/globalVariables"
-import { marked } from "marked"
 import IVote from "@/types/Vote"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import Link from "next/link"
+import SanitizedHTML from "./sanitized-html"
 
 interface ReplyCardProps {
   answer: IAnswer;
@@ -158,13 +158,7 @@ export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer, is
     <Card className={isBestAnswer ? "border-green-500" : ""}>
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-4">
-          <pre>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: marked(answer!.content),
-              }}
-            />
-          </pre>
+          <SanitizedHTML content={answer.content || ""} />
           {isBestAnswer && (
             <TooltipProvider>
               <Tooltip>

@@ -18,6 +18,7 @@ import { marked } from "marked"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import IVote from "@/types/Vote"
+import SanitizedHTML from "@/components/sanitized-html"
 
 
 
@@ -235,15 +236,7 @@ export default function QuestionPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <pre>
-            <div
-              className="mb-4"
-              style={{ whiteSpace: "pre-wrap" }}
-              dangerouslySetInnerHTML={{
-                __html: marked(question!.content.replace(/(?:\r\n|\r|\n)/g, "<br>"))
-              }}
-            />
-          </pre>
+            <SanitizedHTML content={question?.content || ""} />
           {/* <div className="flex flex-wrap gap-2 mb-4">
             {question.tags.map((tag) => (
               <Badge key={tag} variant="secondary">

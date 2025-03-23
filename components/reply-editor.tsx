@@ -8,6 +8,7 @@ import { RootState } from "@/store/store"
 import Link from "next/link"
 import { IAnswer, IQuestion } from "@/types/Post"
 import { api_url } from "@/utils/globalVariables"
+import { Editor } from 'primereact/editor';
 
 interface ReplyEditorProps {
   question: IQuestion;
@@ -55,12 +56,7 @@ export default function ReplyEditor({ question, setNewAnswer }: ReplyEditorProps
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-2xl font-bold">Your Answer</h2>
-      <Textarea
-        value={reply}
-        onChange={(e) => setReply(e.target.value)}
-        placeholder="Your Answer. Use markdown for formatting. For code blocks, use triple backticks (``). For single line code, use one backtick (`)."
-        className="min-h-[200px]"
-      />
+      <Editor value={reply} onTextChange={(e) => setReply(e.htmlValue || "")} style={{ height: '320px' }} />
       {user_id ? !question.isClosed ?
         <Button type="submit" disabled={loading}>{loading ? "hang on ..." : "Post Your Answer"}</Button> :
         <p className="text-muted-foreground">This question is closed. You can&apos;t post an answer.</p> :

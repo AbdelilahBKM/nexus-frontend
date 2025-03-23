@@ -9,11 +9,12 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { ChevronLeft, ChevronRight, Home, PlusCircle, Compass, Settings, User } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "@/store/store"
 import { api_url, storage_url } from "@/utils/globalVariables"
 import IDiscussion from "@/types/Discussion"
 import { IJoining } from "@/types/Joining"
+import { loadAuthState } from "@/store/reducers/authReducer"
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
@@ -21,6 +22,10 @@ export function Sidebar() {
   const [suggestedDiscussions, setSuggestedDiscussions] = useState<IDiscussion[]>([])
   const { user_id, access_token } = useSelector((state: RootState) => state.auth)
   const pathname = usePathname()
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(loadAuthState());
+  }, [dispatch]);
 
   useEffect(() => {
     // Fetch joined discussions

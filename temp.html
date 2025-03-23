@@ -1,0 +1,23 @@
+<h1>First of all &gt;&gt;&gt; Brilliant Idea</h1>
+<h2>secondly you can still use macro for <u>PCR</u> (Personalized Content Rec)</h2>
+<p>here is a code example:</p>
+<p><br></p>
+<div class="ql-code-block-container" spellcheck="false">
+  <div class="ql-code-block"># Tokenize user question and all database questions</div>
+  <div class="ql-code-block">features = tokenizer(</div>
+  <div class="ql-code-block"> [user_question] * len(database_questions),</div>
+  <div class="ql-code-block"> database_questions,</div>
+  <div class="ql-code-block"> padding=True, truncation=True, return_tensors="pt"</div>
+  <div class="ql-code-block">)</div>
+  <div class="ql-code-block"><br></div>
+  <div class="ql-code-block"># Compute similarity scores</div>
+  <div class="ql-code-block">model.eval()</div>
+  <div class="ql-code-block">with torch.no_grad():</div>
+  <div class="ql-code-block"> scores = model(**features).logits</div>
+  <div class="ql-code-block"> print("Scores:", scores)</div>
+  <div class="ql-code-block"><br></div>
+  <div class="ql-code-block"># Get top recommendations based on similarity scores</div>
+  <div class="ql-code-block">recommended_questions = sorted(zip(database_questions, scores.squeeze().tolist()),
+    key=lambda x: x[1], reverse=True)</div>
+  <div class="ql-code-block"><br></div>
+</div>
