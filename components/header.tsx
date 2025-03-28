@@ -62,9 +62,9 @@ export default function Header() {
         setLoading(false);
       }
     }
-    if (isAuthenticated) {
-      fetchNotifications();
-    }
+    // if (isAuthenticated) {
+    //   fetchNotifications();
+    // }
   }, [user_id]);
   return (
     <header className="border-b">
