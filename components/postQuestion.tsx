@@ -44,7 +44,6 @@ export default function AskQuestionPage() {
   const [listDiscussion, setListDiscussion] = useState<IDiscussion[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [id, setId] = useState(0);
   const router = useRouter();
 
   useEffect(() => {

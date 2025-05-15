@@ -12,11 +12,11 @@ import LoadingScreen from "./loading-screen"
 
 export default function DiscussionList() {
   const [discussions, setDiscussions] = useState<IDiscussion[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     const fetchDiscussions = async () => {
       try {
-        setLoading(true);
+        setLoading(false);
         const response = await fetch(`${api_url}/Discussion`, {
           method: "GET",
           headers: {

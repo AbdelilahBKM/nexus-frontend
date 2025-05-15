@@ -20,12 +20,12 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
   const [joinedDiscussions, setJoinedDiscussions] = useState<IDiscussion[]>([])
   const [suggestedDiscussions, setSuggestedDiscussions] = useState<IDiscussion[]>([])
-  const { user_id, access_token } = useSelector((state: RootState) => state.auth)
   const pathname = usePathname()
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(loadAuthState());
   }, [dispatch]);
+  const { user_id, access_token } = useSelector((state: RootState) => state.auth)
 
   useEffect(() => {
     // Fetch joined discussions
@@ -52,27 +52,29 @@ export function Sidebar() {
     }
 
     // Fetch suggested discussions
-    // const fetchSuggestedDiscussions = async () => {
-    //   try {
-    //     const response = await fetch(`${api_url}/Discussion/suggested`, {
-    //       headers: user_id
-    //         ? {
-    //             Authorization: `Bearer ${access_token}`,
-    //           }
-    //         : {},
-    //     })
+    const fetchSuggestedDiscussions = async () => {
+      try {
+        const response = await fetch(`${api_url}/Discussion/suggested`, {
+          headers: user_id
+            ? {
+                Authorization: `Bearer ${access_token}`,
+              }
+            : {},
+        })
 
-    //     if (response.ok) {
-    //       const data = await response.json()
-    //       setSuggestedDiscussions(data)
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching suggested discussions:", error)
-    //   }
-    // }
+        if (response.ok) {
+          const data = await response.json()
+          setSuggestedDiscussions(data)
+        }
+      } catch (error) {
+        console.error("Error fetching suggested discussions:", error)
+      }
+    }
 
     fetchJoinedDiscussions()
-    // fetchSuggestedDiscussions()
+    if(access_token){
+      fetchSuggestedDiscussions()
+    }
   }, [user_id, access_token])
 
 

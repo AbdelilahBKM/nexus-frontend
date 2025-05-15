@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { ThumbsUp, ThumbsDown, MessageSquare, CheckCircle2 } from 'lucide-react'
+import { ThumbsUp, ThumbsDown, CheckCircle2 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { IAnswer } from "@/types/Post"
 import { formatDate } from "./discussion-card"
@@ -22,8 +22,6 @@ interface ReplyCardProps {
 
 export default function ReplyCard({ answer, isBestAnswer, onMarkAsBestAnswer, isOwner }: ReplyCardProps) {
   const { user_id, access_token } = useSelector((state: RootState) => state.auth);
-  const [newReply, setNewReply] = useState<IAnswer | null>(null);
-  const [showComments, setShowComments] = useState(false);
   const [vote, setVote] = useState<IVote | null>(null);
   const [reputation, setReputation] = useState(answer.reputation);
 

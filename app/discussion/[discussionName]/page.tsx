@@ -19,7 +19,6 @@ import { BadgeMinus, BadgePlus, CheckCircle2, MessageSquare, ThumbsDown, ThumbsU
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip";
-import { marked } from "marked";
 import SanitizedHTML from "@/components/sanitized-html";
 
 export default function DiscussionPage() {

@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import Link from "next/link"

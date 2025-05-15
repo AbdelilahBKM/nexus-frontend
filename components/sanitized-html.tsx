@@ -1,5 +1,4 @@
 import React from 'react';
-import DOMPurify from 'dompurify';
 
 // Define types for the component's props
 interface QuestionContentProps {

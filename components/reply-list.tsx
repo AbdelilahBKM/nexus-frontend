@@ -6,7 +6,6 @@ import { api_url } from "@/utils/globalVariables";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 interface IReply {
   discussionId: number;
   replies: IAnswer[];

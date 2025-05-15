@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/store/store"
 import { loadAuthState, logout } from "@/store/reducers/authReducer"
 import { useEffect, useState } from "react"
-import { api_url, storage_url } from "@/utils/globalVariables"
+import { storage_url } from "@/utils/globalVariables"
 import INotification from "@/types/Notification"
 import { useRouter } from "next/navigation"
 
@@ -26,42 +26,43 @@ import { useRouter } from "next/navigation"
 export default function Header() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isAuthenticated, username, user_id, access_token, profile_pic } = useSelector((state: RootState) => state.auth);
-  const [loading, setLoading] = useState(false);
+  const { isAuthenticated, username, user_id, profile_pic } = useSelector((state: RootState) => state.auth);
+  // const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const unreadCount = notifications.filter(n => !n.isRead).length
   useEffect(() => {
     dispatch(loadAuthState());
+    setNotifications([]);
   }, [dispatch]);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        setLoading(true);
-        // Fetch notifications from the server
-        const response = await fetch(`${api_url}/notification/${user_id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${access_token}`,
-          },
-        });
-        if (!response.ok) {
-          if (response.status === 401) {
-            dispatch(logout());
-          }
-          const errorData = await response.json();
-          throw new Error(`${errorData} (Status: ${response.status})`);
-        }
-        const data = await response.json();
-        console.log(data);
-        setNotifications(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    // const fetchNotifications = async () => {
+    //   try {
+    //     setLoading(true);
+    //     // Fetch notifications from the server
+    //     const response = await fetch(`${api_url}/notification/${user_id}`, {
+    //       method: "GET",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         "Authorization": `Bearer ${access_token}`,
+    //       },
+    //     });
+    //     if (!response.ok) {
+    //       if (response.status === 401) {
+    //         dispatch(logout());
+    //       }
+    //       const errorData = await response.json();
+    //       throw new Error(`${errorData} (Status: ${response.status})`);
+    //     }
+    //     const data = await response.json();
+    //     console.log(data);
+    //     setNotifications(data);
+    //   } catch (error) {
+    //     console.error(error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // }
     // if (isAuthenticated) {
     //   fetchNotifications();
     // }
@@ -95,7 +96,7 @@ export default function Header() {
           </DropdownMenu>
           <ModeToggle />
           {
-            isAuthenticated && !loading &&
+            isAuthenticated &&
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
