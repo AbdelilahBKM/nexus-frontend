@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import Header from "@/components/header"
 import StoreProvider from "@/store/authProvider"
 import { Sidebar } from "@/components/sidebar"
+import Chatbot from "@/components/chatbot/chatbot"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,7 +29,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <StoreProvider>
-          <div className="flex h-screen">
+            <div className="flex h-screen">
               <Sidebar />
               <div className="flex-1 flex flex-col min-h-screen overflow-auto">
                 <Header />

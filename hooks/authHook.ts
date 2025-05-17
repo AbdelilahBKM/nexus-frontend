@@ -8,7 +8,7 @@ import { loadAuthState } from "@/store/reducers/authReducer";
 
 const useAuth = () => {
     const dispatch = useDispatch();
-    const isAuth = useSelector((state: RootState) => state.auth.isAuthenticated);
+    const {isAuthenticated, user_id, username, email} = useSelector((state: RootState) => state.auth);
     const router = useRouter();
     const [loading, setLoading] = useState(true);
 
@@ -17,15 +17,15 @@ const useAuth = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (isAuth !== undefined) {
+        if (isAuthenticated !== undefined) {
             setLoading(false);
-            if (!isAuth) {
+            if (!isAuthenticated) {
                 router.replace("/auth");
             }
         }
-    }, [isAuth, router]);
+    }, [isAuthenticated,user_id, username, router]);
 
-    return { isAuth, loading };
+    return { isAuth: isAuthenticated, user_id, username, email, loading };
 };
 
 export default useAuth;
