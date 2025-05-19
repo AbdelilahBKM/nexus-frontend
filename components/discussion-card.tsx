@@ -81,7 +81,7 @@ export default function DiscussionCard({ discussion }: DiscussionCardProps) {
             <Link
               href={`/user/${latestQuestion.postedBy.userName}`}
               className="cursor-pointer hover:underline"> u/{latestQuestion.postedBy.userName}</Link>
-            {" On the " + formatDate(latestQuestion.created_at.toString())}
+            {" On the " + formatDate(latestQuestion.postedAt.toString())}
           </span>
         </div>
       </CardFooter>

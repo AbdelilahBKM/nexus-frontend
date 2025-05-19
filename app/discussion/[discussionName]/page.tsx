@@ -36,12 +36,12 @@ export default function DiscussionPage() {
   useEffect(() => {
     const fetchDiscussion = async () => {
       try {
-        const response = await fetch(`${api_url}/Discussion/Name/${discussionName}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(`${api_url}/Discussion/Name/${encodeURIComponent(discussionName as string)}`, {
+        method: "GET",
+        headers: {
+        "Content-Type": "application/json",
+      },
+  });
 
         if (!response.ok) {
           const error = await response.json();
