@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,9 +29,11 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  if(user_id && access_token){
-    router.back();
-  }
+  useEffect(() => {
+    if(user_id && access_token){
+      router.push("/");
+    }
+  }, [user_id, access_token, router]);
 
   // Login handler
   const handleLogin = async () => {
