@@ -43,7 +43,7 @@ export function Sidebar() {
 
         if (response.ok) {
           const Joining: IJoining[] = await response.json()
-          const discussions: IDiscussion[] = Joining.map((j: any) => j.discussion)
+          const discussions: IDiscussion[] = Joining.map((j: IJoining) => j.discussion)
           setJoinedDiscussions(discussions)
         }
       } catch (error) {

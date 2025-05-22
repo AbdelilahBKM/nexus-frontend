@@ -275,7 +275,7 @@ export default function QuestionPage() {
       </Card>
 
       {/* Add the NexusAssistant component here, before the answers */}
-      {question && <NexusAssistantAnswer />}
+      {question && <NexusAssistantAnswer questionId={question.id} />}
       {question && <NexusAssistant questionId={question.id} />}
 
       {question && question.id && (

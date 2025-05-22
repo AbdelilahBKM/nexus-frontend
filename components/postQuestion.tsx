@@ -189,7 +189,7 @@ export default function AskQuestionPage() {
                 className="text-base"
               />
               <p className="text-sm text-muted-foreground">
-                Be specific and imagine you're asking a question to another person
+                Be specific and imagine you&apos;re asking a question to another person
               </p>
             </div>
 
