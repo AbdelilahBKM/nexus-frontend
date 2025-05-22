@@ -19,6 +19,7 @@ import type { RootState } from "@/store/store"
 import type IVote from "@/types/Vote"
 import SanitizedHTML from "@/components/sanitized-html"
 import NexusAssistant from "@/components/nexus-assistant"
+import NexusAssistantAnswer from "@/components/nexus-assistant-answer"
 
 export default function QuestionPage() {
   const params = useParams()
@@ -274,6 +275,7 @@ export default function QuestionPage() {
       </Card>
 
       {/* Add the NexusAssistant component here, before the answers */}
+      {question && <NexusAssistantAnswer />}
       {question && <NexusAssistant questionId={question.id} />}
 
       {question && question.id && (
